@@ -1,6 +1,8 @@
 
 board = [['-','-','-'],['-','-','-'],['-','-','-']]
 
+user = True
+
 print("Start of Tic Tac Toe")
 print("This is a two player game")
 
@@ -10,8 +12,11 @@ def printBoard(board):
             print(item,"", end="")
         print()
 
-
-printBoard(board)
+def currentUser(user):
+    if user:
+        return 'x'
+    else:
+        return 'o'
 
 def quit(userInput):
     if userInput == 'q':
@@ -43,7 +48,6 @@ def validNumber(userInput):
         return True
 
 def positionTaken(position, board):
-
     row = position[0]
     column = position[1]
     if board[row][column] != '-':
@@ -51,8 +55,7 @@ def positionTaken(position, board):
         return True
     else:
         return False
-
-
+         
 def positionBoard(userInput):
     row = int(userInput/3)
     column = userInput
@@ -60,14 +63,56 @@ def positionBoard(userInput):
         column = int(column % 3)
     return(row,column)
 
-def addBoard(position, board):
+def addBoard(position, board, currentPlayer):
     row = position[0]
     column = position[0]
-    board[row][column] = 'x'
-    print(printBoard(board))
+    board[row][column] = currentPlayer
 
+def checkWin(user, board):
+    if checkRow(user,board):
+        return True
+    if checkColumn(user,board):
+        return True
+    if checkDiags(user,board):
+        return True
+    return False
 
-while True:
+def checkRow(user,board):
+    for lane in board:
+        winRow = True
+        for i in lane:
+            if i != user:
+                winRow = False
+                break
+        if winRow == True:
+            return True
+    return False
+
+def checkColumn(user,board):
+    for col in range(3):
+        winColumn = True
+        for row in col:
+            if board[row][col] != user:
+                winColumn = False
+                break
+        if winColumn == True:
+            return True
+    return False
+
+def checkDiags(user,board):
+    if board[0][0] == user and baord[1][1] == user and board[2][2] == user:
+        return True
+    elif board[0][2] == user and board[1][1] and board[2][0] == user:
+        return True
+    else:
+        return False
+
+turn = 0
+
+while turn < 9:
+
+    currentPlayer = currentUser(user)
+    printBoard(board)
     print("Please enter a number 1 through 9 or \"q\" to quit")
     userInput = input()
 
@@ -79,11 +124,16 @@ while True:
         continue
 
 
-    userInput = int(userInput) -1
+    userInput = int(userInput) - 1
     position = positionBoard(userInput)
 
     if positionTaken(position, board):
         print('Please try again')
         continue
-    else:
-        addBoard(position, board)
+    
+    addBoard(position, board, currentPlayer)
+
+    turn += 1
+    if turn == 9:
+        print("The game has tied!")
+    user = not user
